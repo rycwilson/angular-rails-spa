@@ -1,6 +1,6 @@
 class ReceiptsController < ApplicationController
 
-  before_action :valid_api_token
+  before_action :validate_api_token
 
   # The actions in this file are for JSON response only
   respond_to :json
@@ -53,7 +53,7 @@ class ReceiptsController < ApplicationController
     params.require(:receipt).permit!
   end
 
-  def valid_api_token
+  def validate_api_token
     @valid_api_token = ApiToken.find_by hex_value:params[:api_token]
   end
 
