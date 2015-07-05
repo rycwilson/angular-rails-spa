@@ -2,18 +2,13 @@
   <div ng-controller="MainCtrl">
     <section ng-init="tab = 1">
       <ul class="nav nav-tabs">
-        <li ng-class="{ active:tabSelected(1) }"> <a href ng-click="selectTab(1)"> Account Info </a> </li>
+        <li ng-class="{ active:tabSelected(1) }"> <a ng-click="selectTab(1)"> Account Info </a> </li>
         <li ng-class="{ active:tabSelected(2) }"> <a ng-click="selectTab(2)"> Receipts </a> </li>
         <li ng-class="{ active:tabSelected(3) }"> <a ng-click="selectTab(3)"> Add Receipt </a> </li>
       </ul>
         <!-- tab content panels -->
       <div class="panel panel-default" ng-show="tabSelected(1)">
         <div class='panel-body'>
-          <div class='row'>
-            <div class='col-md-2 text-right'>
-              <h3>Account Info</h3>
-            </div>
-          </div>
           <br>
           <div class='row'>
             <div class='col-md-2 text-right'>
@@ -50,23 +45,40 @@
       </div>
       <div class="panel panel-default" ng-show="tabSelected(2)">
         <div class='panel-body'>
-          <h3>Receipts</h3>
-            <ul class='list-group col-md-offset-1'>
-              <li ng-repeat="receipt in currentStore.simple_receipts">
-                {{ receipt | json }}
-              </li>
-            </ul>
+        <br>
+          <div class='col-md-10 col-md-offset-1'>
+            <table class='table table-striped'>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Amount</th>
+                  <th>Transaction Num.</th>
+                  <th>Date</th>
+                  <th class='glyph'>Edit</th>
+                  <th class='glyph'>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="receipt in currentStore.simple_receipts">
+                  <td>{{ receipt.item }}</td>
+                  <td>{{ receipt.amount | currency:'$':2 }}</td>
+                  <td>{{ receipt.transaction_num }}</td>
+                  <td>{{ receipt.created_at | date:'short' }}</td>
+                  <td class='glyph'>
+                    <span class='glyphicon glyphicon-pencil'></span>
+                  </td>
+                  <td class='glyph'>
+                    <a ng-click='removeReceipt(receipt)'><span class='glyphicon glyphicon-remove-circle'></span></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <div class="panel panel-default" ng-show="tabSelected(3)">
         <div class='panel-body'>
-          <div class='row'>
-            <div class='col-md-2 text-right'>
-              <h3>Add Receipt</h3>
-            </div>
-          </div>
-          <div>Valid? newReceiptForm is {{ newReceiptForm.$valid }}</div>
-          <br>
+        <br>
           <form name="newReceiptForm"
             ng-submit="newReceiptForm.$valid &&
                        addReceipt(currentStore.simple_receipts, $event)"
@@ -92,6 +104,7 @@
               <input type="text" ng-model="newReceipt.transaction_num" required>
             </div>
             <!-- $valid is a built-in property -->
+            <div>Valid? newReceiptForm is {{ newReceiptForm.$valid }}</div>
             <div class='col-md-4 text-right'>
               <input id="submit" type="submit" value="Add Receipt"
                 class='btn btn-primary'>
@@ -100,7 +113,6 @@
         </div>
       </div>
     </section>
-
   </div>   <!-- ng-controller -->
 </div>   <!-- ng-app -->
 

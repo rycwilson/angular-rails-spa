@@ -44,20 +44,36 @@ app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
     });
 
   $scope.addReceipt = function(storeReceipts, $event) {
+    // url to POST to
+    var url = '/receipts.json?api_token=' + $scope.currentStore.api_token.hex_value;
     // fill in the store name and id
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
     // add to $scope.currentStore's receipts
     storeReceipts.push($scope.newReceipt);
+    console.log($scope.newReceipt);
     // POST receipt object
-    $http.post('/receipts.json', {receipt: $scope.newReceipt}).
+    $http.post(url, {receipt: $scope.newReceipt}).
       success(function(data, status) {
         // check status
         // add some flash messaging for success
       });
     // reset newReceipt
     $scope.newReceipt = {};
+    // remove focus from button
     $event.target.submit.blur();
+  };
+
+  $scope.removeReceipt = function(receipt) {
+    var url = '/receipts.json?api_token=' +
+              $scope.currentStore.api_token.hex_value +
+              '&id=' + receipt.id;
+    var receipts = $scope.currentStore.simple_receipts;
+    receipts.splice(receipts.indexOf(receipt), 1);
+    $http.delete(url).
+      success(function(data, status) {
+        console.log(status, data);
+      });
   };
 
   // TODO: better to create a custom directive than manipulate DOM

@@ -23,7 +23,12 @@ class ReceiptsController < ApplicationController
   # POST /receipts.json
   #
   def create
-    if logged_in? || @valid_api_token
+    # Shouldn't have to pass api_token if logged in
+    # BUT...
+    # Why does current_store come up nil when I POST asynchronously ???
+    # So, unless I pass an API token, this doesn't work:
+    # if logged_in? || @valid_api_token
+    if @valid_api_token
       @simple_receipt = SimpleReceipt.create receipt_params
       # Make sure there's a simple_receipt_path in routes.rb
       # The responder will look for a receipt_path even though it's
@@ -37,6 +42,22 @@ class ReceiptsController < ApplicationController
       #     format.json { render json: @simple_receipt.errors, status: :unprocessable_entity }
       #   end
       # end
+    else
+      # unauthorized
+      render json: { status:"error",
+                       mesg:"Invalid API token" }, status: 401
+    end
+  end
+
+  #
+  # DELETE /receipts.json
+  #
+  def destroy
+    if @valid_api_token
+      receipt = SimpleReceipt.find params[:id]
+      receipt.destroy
+      # Rails will send status 204 with empty response
+      respond_with receipt
     else
       # unauthorized
       render json: { status:"error",
