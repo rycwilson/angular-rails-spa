@@ -12,7 +12,8 @@ class StoresController < ApplicationController
   end
 
   #
-  # GET /account (open Angular SPA)
+  # GET /account.html (open Angular SPA)
+  # GET /account.json (serve up account data)
   #
   def show
     @store = current_store
@@ -27,14 +28,17 @@ class StoresController < ApplicationController
     if @store.save
       assign_api_token @store
       login @store
-      redirect_to account_path @store
+      # NOTE account_path and NOT account_path(@store)
+      # the latter doesn't work because there is no route
+      # defined for account/:id
+      redirect_to account_path
     else
       render :new
     end
   end
 
   #
-  # PUT /account/token_reset
+  # GET /account/token_reset.json
   #
   def token_reset
     reset_api_token current_store

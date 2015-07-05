@@ -15,8 +15,8 @@ Rails.application.routes.draw do
   get '/receipts', to: 'receipts#show', as: 'receipts'
   post '/receipts', to: 'receipts#create'
 
-  # these routes are necessary for using respond_with
-  get '/receipt/:id', to: 'receipts#show', as: 'receipt'
+  # this route is necessary for using respond_with (despite there
+  # being no redirect for JSON response)
   get '/simple_receipt/:id', to: 'receipts#show', as: 'simple_receipt'
 
   get '/passwd_reset', to: 'stores#passwd_reset', as: 'passwd_reset'

@@ -44,15 +44,13 @@ app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
     });
 
   $scope.addReceipt = function(storeReceipts, $event) {
-    // url to POST to
-    var url = '/receipts?api_token=' + $scope.currentStore.api_token.hex_value;
     // fill in the store name and id
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
     // add to $scope.currentStore's receipts
     storeReceipts.push($scope.newReceipt);
     // POST receipt object
-    $http.post(url, {receipt: $scope.newReceipt}).
+    $http.post('/receipts.json', {receipt: $scope.newReceipt}).
       success(function(data, status) {
         // check status
         // add some flash messaging for success
