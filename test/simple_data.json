@@ -1,0 +1,9 @@
+{
+  "receipt": {
+    "store_id": 5,
+    "store_name": "Joe's Warehouse",
+    "item": "Toolbox",
+    "amount": "39.99",
+    "transaction_num": "JDFSDG833"
+  }
+}

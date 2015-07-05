@@ -30,21 +30,45 @@ app.config(["$httpProvider", function ($httpProvider) {
 
 app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
 
-  $scope.current_store = null;
+  $scope.currentStore = null;
+  // placeholder for a new receipt (with name initialized)
+  $scope.newReceipt = {};
+  // start on the Account Info tab
+  $scope.tab = 1;
+
+  $http.get("/account.json").
+    success(function (store) {
+      $scope.currentStore = store;
+      // Trying to prettyify JSON, not working.  Use a custom directive instead
+      // $scope.receipts = JSON.stringify(store.simple_receipts, null, 2);
+    });
+
+  $scope.addReceipt = function(storeReceipts, $event) {
+    // fill in the store name
+    $scope.newReceipt.store_name = $scope.currentStore.name;
+    // add to the store's receipts
+    storeReceipts.push($scope.newReceipt);
+    // reset newReceipt
+    $scope.newReceipt = {};
+    $event.target.submit.blur();
+  };
 
   // TODO: better to create a custom directive than manipulate DOM
-  // from controller (but blur() is pretty simple)
+  // from controller (but blur() is pretty simple; ok for now)
   $scope.resetToken = function($event) {
     $http.get('account/token_reset.json').
       success(function (new_token) {
-        $scope.current_store.api_token.hex_value = new_token.hex_value;
+        $scope.currentStore.api_token.hex_value = new_token.hex_value;
         $event.target.blur();
       });
   };
 
-  $http.get("/account.json").
-    success(function (store) {
-      $scope.current_store = store;
-    });
+  $scope.tabSelected = function(checkTab) {
+    return $scope.tab === checkTab;
+  };
+
+  $scope.selectTab = function(setTab) {
+    $scope.tab = setTab;
+  };
 
 }]);

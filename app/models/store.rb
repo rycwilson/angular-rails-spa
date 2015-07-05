@@ -8,6 +8,7 @@ class Store < ActiveRecord::Base
 
   # associations
   has_many :receipts, dependent: :destroy
+  has_many :simple_receipts, dependent: :destroy
   has_one :api_token, dependent: :destroy
 
   # returns store or false

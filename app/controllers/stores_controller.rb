@@ -16,7 +16,7 @@ class StoresController < ApplicationController
   #
   def show
     @store = current_store
-    respond_with @store, include: :api_token
+    respond_with @store, include: [:api_token, :simple_receipts]
   end
 
   #

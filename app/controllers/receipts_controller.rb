@@ -9,7 +9,7 @@ class ReceiptsController < ApplicationController
   #
   def show
     if @valid_api_token
-      @receipts = @valid_api_token.store.receipts
+      @receipts = @valid_api_token.store.simple_receipts
       respond_with @receipts
     else
       # unauthorized
@@ -23,11 +23,11 @@ class ReceiptsController < ApplicationController
   #
   def create
     if @valid_api_token
-      @receipt = Receipt.create receipt_params
+      @simple_receipt = SimpleReceipt.create receipt_params
       # Make sure there's a receipt_path in routes.rb
       # The responder will look for a receipt_path even though it's
       # not actually redirecting (as in the case of JSON response)
-      respond_with @receipt
+      respond_with @simple_receipt
       # equivalent to:
       # respond_to do |format|
       #   if @receipt.save

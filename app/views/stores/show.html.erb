@@ -1,45 +1,107 @@
 <div ng-app="StoreApp">
   <div ng-controller="MainCtrl">
-    <div class='col-md-6'>
-      <div class='well'>
-        <div class='row'>
-          <div class='col-md-4 text-right'>
-            <h3>Account Info</h3>
+
+    <section ng-init="tab = 1">
+      <ul class="nav nav-tabs">
+        <li ng-class="{ active:tabSelected(1) }"> <a href ng-click="selectTab(1)"> Account Info </a> </li>
+        <li ng-class="{ active:tabSelected(2) }"> <a ng-click="selectTab(2)"> Receipts </a> </li>
+        <li ng-class="{ active:tabSelected(3) }"> <a ng-click="selectTab(3)"> Add Receipt </a> </li>
+      </ul>
+        <!-- tab content panels -->
+      <div class="panel panel-default" ng-show="tabSelected(1)">
+        <div class='panel-body'>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <h3>Account Info</h3>
+            </div>
           </div>
+          <br>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <label>Store name</label>
+            </div>
+            <div class='col-md-4'>
+              {{ currentStore.name }}
+            </div>
+          </div>
+          <br>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <label>Email</label>
+            </div>
+            <div class='col-md-4'>
+              {{ currentStore.email }}
+            </div>
+          </div>
+          <br>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <label>API Token</label>
+            </div>
+            <div class='col-md-3'>
+              {{ currentStore.api_token.hex_value }}
+            </div>
+            <div class='col-md-1'>
+              <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset</button>
+            </div>
+          </div>
+          <br>
+
         </div>
-        <br>
-        <div class='row'>
-          <div class='col-md-4 text-right'>
-            Store name:
-          </div>
-          <div class='col-md-7'>
-            {{ current_store.name }}
-          </div>
+      </div>
+      <div class="panel panel-default" ng-show="tabSelected(2)">
+        <div class='panel-body'>
+          <h3>Receipts</h3>
+            <ul class='list-group col-md-offset-1'>
+              <li ng-repeat="receipt in currentStore.simple_receipts">
+                {{ receipt | json }}
+              </li>
+            </ul>
         </div>
-        <br>
-        <div class='row'>
-          <div class='col-md-4 text-right'>
-            Email:
+      </div>
+      <div class="panel panel-default" ng-show="tabSelected(3)">
+        <div class='panel-body'>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <h3>Add Receipt</h3>
+            </div>
           </div>
-          <div class='col-md-7'>
-            {{ current_store.email }}
-          </div>
+          <div>Valid? newReceiptForm is {{ newReceiptForm.$valid }}</div>
+          <br>
+          <form name="newReceiptForm"
+            ng-submit="newReceiptForm.$valid &&
+                       addReceipt(currentStore.simple_receipts, $event)"
+            novalidate>
+            <div class='form-group'>
+              <div class='col-md-2 text-right'>
+                <label>Item</label>
+              </div>
+              <input type="text" ng-model="newReceipt.item" required>
+              <br>
+            </div>
+            <div class='form-group'>
+              <div class='col-md-2 text-right'>
+              <label>Amount</label>
+              </div>
+              <input type="number" ng-model="newReceipt.amount" required>
+              <br>
+            </div>
+            <div class='form-group'>
+              <div class='col-md-2 text-right'>
+              <label>Transaction Number</label>
+              </div>
+              <input type="text" ng-model="newReceipt.transaction_num" required>
+            </div>
+            <!-- $valid is a built-in property -->
+            <div class='col-md-4 text-right'>
+              <input id="submit" type="submit" value="Add Receipt"
+                class='btn btn-primary'>
+            </div>
+          </form>
         </div>
-        <br>
-        <div class='row'>
-          <div class='col-md-4 text-right'>
-            API Token:
-          </div>
-          <div class='col-md-6'>
-            {{ current_store.api_token.hex_value }}
-          </div>
-          <div class='col-md-2'>
-            <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset</button>
-          </div>
-        </div>
-        <br>
-      </div>    <!-- well -->
-    </div>
-  </div>
-</div>
+      </div>
+    </section>
+
+  </div>   <!-- ng-controller -->
+</div>   <!-- ng-app -->
 
