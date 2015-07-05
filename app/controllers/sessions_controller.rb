@@ -18,7 +18,10 @@ class SessionsController < ApplicationController
         if @store
           # user authorized, ok
           login @store
-          redirect_to account_path(@store)
+          # NOTE account_path and NOT account_path(@store)
+          # the latter doesn't work because there is no route
+          # defined for account/:id
+          redirect_to account_path
         else
           # bad password
           # display the login page again

@@ -1,37 +1,45 @@
-<div class='col-md-6'>
-  <div class='well'>
-    <div class='row'>
-      <div class='col-md-4 text-right'>
-        <h3>Account Info</h3>
-      </div>
+<div ng-app="StoreApp">
+  <div ng-controller="MainCtrl">
+    <div class='col-md-6'>
+      <div class='well'>
+        <div class='row'>
+          <div class='col-md-4 text-right'>
+            <h3>Account Info</h3>
+          </div>
+        </div>
+        <br>
+        <div class='row'>
+          <div class='col-md-4 text-right'>
+            Store name:
+          </div>
+          <div class='col-md-7'>
+            {{ current_store.name }}
+          </div>
+        </div>
+        <br>
+        <div class='row'>
+          <div class='col-md-4 text-right'>
+            Email:
+          </div>
+          <div class='col-md-7'>
+            {{ current_store.email }}
+          </div>
+        </div>
+        <br>
+        <div class='row'>
+          <div class='col-md-4 text-right'>
+            API Token:
+          </div>
+          <div class='col-md-6'>
+            {{ current_store.api_token.hex_value }}
+          </div>
+          <div class='col-md-2'>
+            <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset</button>
+          </div>
+        </div>
+        <br>
+      </div>    <!-- well -->
     </div>
-    <br>
-    <div class='row'>
-      <div class='col-md-4 text-right'>
-        Store name:
-      </div>
-      <div class='col-md-7'>
-        <%= @store.name %>
-      </div>
-    </div>
-    <br>
-    <div class='row'>
-      <div class='col-md-4 text-right'>
-        Email:
-      </div>
-      <div class='col-md-7'>
-        <%= @store.email %>
-      </div>
-    </div>
-    <br>
-    <div class='row'>
-      <div class='col-md-4 text-right'>
-        API Token:
-      </div>
-      <div class='col-md-7'>
-        <%= @store.api_token.hex_value %>
-      </div>
-    </div>
-    <br>
-  </div>    <!-- well -->
+  </div>
 </div>
+

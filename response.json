@@ -1,0 +1,15 @@
+HTTP/1.1 200 OK 
+X-Frame-Options: SAMEORIGIN
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Type: application/json; charset=utf-8
+Etag: W/"75989dad3ea55197f99c27ba714680f6"
+Cache-Control: max-age=0, private, must-revalidate
+X-Request-Id: 641a07f3-e8db-4e92-a1cb-25057d1e852d
+X-Runtime: 0.098228
+Server: WEBrick/1.3.1 (Ruby/2.2.0/2014-12-25)
+Date: Sat, 04 Jul 2015 19:32:52 GMT
+Content-Length: 783
+Connection: Keep-Alive
+
+[{"id":35,"customer_info":{"first_name":"Jane","last_name":"Doe","member_id":"xxxx"},"items":[{"sku":"ABC123","description":"Super Computer","upc":"012345678901","serial_number":"123ABC123","price":"1000.00","taxcode":"A"},{"sku":"CDE456","description":"t-shirt","upc":"222333222333","price":"12.00","qty":"4","taxcode":"A"},{"plu":"4135","description":"Gala Apples","weight":"4.1 lb","rate":"1.00 / 1 lb","price":"4.10","taxcode":"B"},{"description":"soda can","price":"1.00","taxcode":"A"}],"subtotal":"1017.1","taxes":"81.04","total":"1298.14","transaction_number":"XXXXX","item_count":7,"payment_method":"CARD ENDING in XXXX","tender_amount":"1298.14","tip":"200.0","change_due":"0.0","created_at":"2015-07-04T15:32:18.111Z","updated_at":"2015-07-04T15:32:18.111Z","store_id":5}]

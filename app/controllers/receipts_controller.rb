@@ -8,8 +8,8 @@ class ReceiptsController < ApplicationController
   # GET /receipts.json
   #
   def show
-    if @api_token
-      @receipts = @api_token.store.receipts
+    if @valid_api_token
+      @receipts = @valid_api_token.store.receipts
       respond_with @receipts
     else
       # unauthorized
@@ -22,7 +22,7 @@ class ReceiptsController < ApplicationController
   # POST /receipts.json
   #
   def create
-    if @api_token
+    if @valid_api_token
       @receipt = Receipt.create receipt_params
       # Make sure there's a receipt_path in routes.rb
       # The responder will look for a receipt_path even though it's
@@ -44,10 +44,6 @@ class ReceiptsController < ApplicationController
   end
 
   private
-
-  def validate_api_token
-    @api_token = ApiToken.find_by hex_value:params[:api_token]
-  end
 
   def receipt_params
     # permit all receipt attributes
