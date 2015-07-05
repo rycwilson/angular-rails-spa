@@ -31,7 +31,7 @@ app.config(["$httpProvider", function ($httpProvider) {
 app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
 
   $scope.currentStore = null;
-  // placeholder for a new receipt (with name initialized)
+  // placeholder for a new receipt
   $scope.newReceipt = {};
   // start on the Account Info tab
   $scope.tab = 1;
@@ -44,10 +44,19 @@ app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
     });
 
   $scope.addReceipt = function(storeReceipts, $event) {
-    // fill in the store name
+    // url to POST to
+    var url = '/receipts?api_token=' + $scope.currentStore.api_token.hex_value;
+    // fill in the store name and id
     $scope.newReceipt.store_name = $scope.currentStore.name;
-    // add to the store's receipts
+    $scope.newReceipt.store_id = $scope.currentStore.id;
+    // add to $scope.currentStore's receipts
     storeReceipts.push($scope.newReceipt);
+    // POST receipt object
+    $http.post(url, {receipt: $scope.newReceipt}).
+      success(function(data, status) {
+        // check status
+        // add some flash messaging for success
+      });
     // reset newReceipt
     $scope.newReceipt = {};
     $event.target.submit.blur();
@@ -56,7 +65,7 @@ app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
   // TODO: better to create a custom directive than manipulate DOM
   // from controller (but blur() is pretty simple; ok for now)
   $scope.resetToken = function($event) {
-    $http.get('account/token_reset.json').
+    $http.get('/account/token_reset.json').
       success(function (new_token) {
         $scope.currentStore.api_token.hex_value = new_token.hex_value;
         $event.target.blur();
