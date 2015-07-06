@@ -40,7 +40,6 @@
             </div>
           </div>
           <br>
-
         </div>
       </div>
       <div class="panel panel-default" ng-show="tabSelected(2)">
@@ -59,13 +58,13 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="receipt in currentStore.simple_receipts">
+                <tr ng-repeat="receipt in currentStore.simple_receipts | orderBy:'created_at':true">
                   <td>{{ receipt.item }}</td>
                   <td>{{ receipt.amount | currency:'$':2 }}</td>
                   <td>{{ receipt.transaction_num }}</td>
                   <td>{{ receipt.created_at | date:'short' }}</td>
                   <td class='glyph'>
-                    <span class='glyphicon glyphicon-pencil'></span>
+                    <a ng-click="showModal()" <span class='glyphicon glyphicon-pencil'></span></a>
                   </td>
                   <td class='glyph'>
                     <a ng-click='removeReceipt(receipt)'><span class='glyphicon glyphicon-remove-circle'></span></a>
