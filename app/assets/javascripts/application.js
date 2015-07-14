@@ -17,46 +17,58 @@
 //= require angular/angular
 //= require_tree .
 
-console.log('js loaded');
-
 var app = angular.module("StoreApp", []);
 
 // Required to POST/PUT/PATCH to Rails
 app.config(["$httpProvider", function ($httpProvider) {
   $httpProvider.
-    defaults.headers.common["X-CSRF"] = $("meta[name=csrf-token]").attr("content");
+    defaults.headers.common["X-CSRF-TOKEN"] = $("meta[name=csrf-token]").attr("content");
 }]);
 //
 
-app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
+app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
+    function ($scope, $http, storeFactory, receiptFactory) {
 
   $scope.currentStore = null;
+  $scope.status = null;
   // placeholder for a new receipt
   $scope.newReceipt = {};
   // start on the Account Info tab
   $scope.tab = 1;
 
-  $http.get("/account.json").
-    success(function (store) {
-      $scope.currentStore = store;
-      // Trying to prettyify JSON, not working.  Use a custom directive instead
-      // $scope.receipts = JSON.stringify(store.simple_receipts, null, 2);
-    });
+  $scope.currentStore = getCurrentStore();
 
-  $scope.addReceipt = function(storeReceipts, $event) {
-    // url to POST to
-    var url = '/receipts.json?api_token=' + $scope.currentStore.api_token.hex_value;
-    // fill in the store name and id
+  function getCurrentStore() {
+    storeFactory.getCurrentStore()
+      .success(function(store) {
+        $scope.currentStore = store;
+      })
+      .error(function(error) {
+        $scope.status = 'Error loading data: ' + error.message;
+    });
+  }
+
+  $scope.addReceipt = function(currentStore, $event) {
+    // fill in the store name and id, and date
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
+    // The line below (creating the date for $scope) results in
+    // data-binding not working, i.e. view is not updated until
+    // reloaded from the server.  Wtf?
+    // -> No date for now.  Date will only appear upon re-load
+    // from the server
+    // $scope.newReceipt.created_at = new Date();
+    console.log('New receipt: ', $scope.newReceipt);
     // add to $scope.currentStore's receipts
-    storeReceipts.push($scope.newReceipt);
-    console.log($scope.newReceipt);
+    currentStore.simple_receipts.push($scope.newReceipt);
+    console.log('currentStore receipts: ', currentStore.simple_receipts);
     // POST receipt object
-    $http.post(url, {receipt: $scope.newReceipt}).
-      success(function(data, status) {
-        // check status
-        // add some flash messaging for success
+    receiptFactory.addReceipt($scope.newReceipt, $scope.currentStore.api_token.hex_value)
+      .success(function(data, status) {
+        console.log('addReceipt success: ', data, status);
+      })
+      .error(function(data, status) {
+        console.log('addReceipt error: ', data, status);
       });
     // reset newReceipt
     $scope.newReceipt = {};
@@ -65,15 +77,12 @@ app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
   };
 
   $scope.removeReceipt = function(receipt) {
-    var url = '/receipts.json?api_token=' +
-              $scope.currentStore.api_token.hex_value +
-              '&id=' + receipt.id;
     var receipts = $scope.currentStore.simple_receipts;
     if (confirm("Are you sure?")) {
       receipts.splice(receipts.indexOf(receipt), 1);
-      $http.delete(url).
-        success(function(data, status) {
-          console.log(status, data);
+      receiptFactory.removeReceipt(receipt, $scope.currentStore.api_token.hex_value)
+        .success(function(data, status) {
+          console.log(data, status);
         });
     }
   };
@@ -97,3 +106,26 @@ app.controller("MainCtrl", ['$scope', '$http', function ($scope, $http) {
   };
 
 }]);
+
+app.factory('storeFactory', ['$http', function ($http) {
+  var storeFactory = {};
+  storeFactory.getCurrentStore = function() {
+    return $http.get("/account.json");
+  };
+  return storeFactory;
+}]);
+
+app.factory('receiptFactory', ['$http', function ($http) {
+  var receiptFactory = {};
+  receiptFactory.addReceipt = function(newReceipt, api_token) {
+    var url = '/receipts.json?api_token=' + api_token;
+    return $http.post(url, {receipt: newReceipt});
+  };
+  receiptFactory.removeReceipt = function(receipt, api_token) {
+    var url = '/receipts.json?api_token=' +
+              api_token + '&id=' + receipt.id;
+    return $http.delete(url);
+  };
+  return receiptFactory;
+}]);
+

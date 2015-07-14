@@ -64,7 +64,7 @@
                   <td>{{ receipt.transaction_num }}</td>
                   <td>{{ receipt.created_at | date:'short' }}</td>
                   <td class='glyph'>
-                    <a ng-click="showModal()" <span class='glyphicon glyphicon-pencil'></span></a>
+                    <a <span class='glyphicon glyphicon-pencil'></span></a>
                   </td>
                   <td class='glyph'>
                     <a ng-click='removeReceipt(receipt)'><span class='glyphicon glyphicon-remove-circle'></span></a>
@@ -80,7 +80,7 @@
         <br>
           <form name="newReceiptForm"
             ng-submit="newReceiptForm.$valid &&
-                       addReceipt(currentStore.simple_receipts, $event)"
+                       addReceipt(currentStore, $event)"
             novalidate>
             <div class='form-group'>
               <div class='col-md-2 text-right'>
