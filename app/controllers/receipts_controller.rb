@@ -49,6 +49,9 @@ class ReceiptsController < ApplicationController
     end
   end
 
+  def update
+  end
+
   #
   # DELETE /receipts.json
   #

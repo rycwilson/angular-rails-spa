@@ -33,6 +33,8 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
   $scope.status = null;
   // placeholder for a new receipt
   $scope.newReceipt = {};
+  // placeholder for an edited receipt
+  $scope.editReceipt = {};
   // start on the Account Info tab
   $scope.tab = 1;
 
@@ -75,6 +77,20 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     $scope.newReceipt = {};
     // remove focus from button
     $event.target.submit.blur();
+  };
+
+  $scope.updateReceipt = function(receipt) {
+    console.log(receipt);
+    $scope.editReceipt.store_id = receipt.store_id;
+    receiptFactory.updateReceipt($scope.editReceipt, $scope.currentStore.api_token.hex_value)
+      .success(function(data, status) {
+        console.log('updateReceipt success: ', data, status);
+      })
+      .error(function(data, status) {
+        console.log(('updateReceipt error: ', data, status));
+      });
+    // reset editReceipt
+    $scope.editReceipt = {};
   };
 
   $scope.removeReceipt = function(receipt) {
@@ -121,6 +137,11 @@ app.factory('receiptFactory', ['$http', function ($http) {
   receiptFactory.addReceipt = function(newReceipt, api_token) {
     var url = '/receipts.json?api_token=' + api_token;
     return $http.post(url, {receipt: newReceipt});
+  };
+  receiptFactory.updateReceipt = function(editReceipt, api_token) {
+    var url = '/receipts.json?api_token=' +
+              api_token + '&id=' + editReceipt.id;
+    return $http.put(url, {receipt: editReceipt});
   };
   receiptFactory.removeReceipt = function(receipt, api_token) {
     var url = '/receipts.json?api_token=' +
