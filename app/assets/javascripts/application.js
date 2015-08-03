@@ -35,7 +35,9 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
   $scope.newReceipt = {};
   // placeholder for an edited receipt
   $scope.editReceipt = {};
-  // start on the Account Info tab
+  // placeholder for an edited profile
+  $scope.editProfile = {};
+  // start on the Account Profile tab
   $scope.tab = 1;
 
   $scope.currentStore = getCurrentStore();
@@ -91,8 +93,8 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
         console.log(('updateReceipt error: ', data, status));
       });
     // close the modal
-    $('#edit').modal('hide');
-    // reset editReceipt
+    $('#edit-receipt').modal('hide');
+    // reset buffer
     $scope.editReceipt = {};
   };
 
@@ -107,6 +109,24 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     }
   };
 
+  $scope.updateProfile = function() {
+    // update $scope
+    $scope.currentStore.name = $scope.editProfile.name;
+    $scope.currentStore.email = $scope.editProfile.email;
+    // PUT updated profile
+    storeFactory.updateProfile($scope.editProfile, $scope.currentStore.api_token.hex_value)
+      .success(function(data, status) {
+        console.log('updateReceipt success: ', data, status);
+      })
+      .error(function(data, status) {
+        console.log(('updateReceipt error: ', data, status));
+      });
+    // close the modal
+    $('#edit-profile').modal('hide');
+    // reset buffer
+    $scope.editProfile = {};
+  };
+
   // TODO: better to create a custom directive than manipulate DOM
   // from controller (but blur() is pretty simple; ok for now)
   $scope.resetToken = function($event) {
@@ -117,11 +137,17 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
       });
   };
 
-  $scope.openEditModal = function(receipt) {
+  $scope.openEditReceiptModal = function(receipt) {
     $scope.editReceipt.id = receipt.id;
     $scope.editReceipt.item = receipt.item;
     $scope.editReceipt.amount = receipt.amount;
     $scope.editReceipt.transaction_num = receipt.transaction_num;
+  };
+
+  $scope.openEditProfileModal = function(currentStore) {
+    $scope.editProfile.id = currentStore.id;
+    $scope.editProfile.name = currentStore.name;
+    $scope.editProfile.email = currentStore.email;
   };
 
   $scope.tabSelected = function(checkTab) {
@@ -138,6 +164,11 @@ app.factory('storeFactory', ['$http', function ($http) {
   var storeFactory = {};
   storeFactory.getCurrentStore = function() {
     return $http.get("/account.json");
+  };
+  storeFactory.updateProfile = function(editProfile, api_token) {
+    var url = '/account.json?api_token=' +
+              api_token + '&id=' + editProfile.id;
+    return $http.put(url, {store: editProfile});
   };
   return storeFactory;
 }]);

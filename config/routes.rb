@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   post '/stores', to: 'stores#create'
 
   get '/account', to: 'stores#show', as: 'account'
+  put '/account', to: 'stores#update'
+
   get '/account/token_reset', to: "stores#token_reset"
 
   get '/receipts', to: 'receipts#show', as: 'receipts'

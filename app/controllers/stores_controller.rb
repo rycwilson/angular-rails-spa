@@ -1,6 +1,7 @@
 class StoresController < ApplicationController
 
   before_action :require_login, only: [:show, :token_reset]
+  before_action :validate_api_token, only: [:update]
 
   respond_to :html, :json
 
@@ -38,6 +39,23 @@ class StoresController < ApplicationController
   end
 
   #
+  # PUT /account.json
+  #
+  def update
+    if @valid_api_token
+      @store = Store.find params[:id]
+      @store.update params.require(:store).permit(:name, :email)
+      # TODO: return the object
+      # By default, Rails won't do this with PUT, body content is empty
+      respond_with @store
+    else
+      # unauthorized
+      render json: { status:"error",
+                       mesg:"Invalid API token" }, status: 401
+    end
+  end
+
+  #
   # GET /account/token_reset.json
   #
   def token_reset
@@ -64,6 +82,10 @@ class StoresController < ApplicationController
   def reset_api_token store
     token = ApiToken.find_by(store_id:store.id)
     token.update(hex_value:SecureRandom.hex)
+  end
+
+  def validate_api_token
+    @valid_api_token = ApiToken.find_by hex_value:params[:api_token]
   end
 
 end

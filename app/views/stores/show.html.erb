@@ -6,37 +6,42 @@
         <li ng-class="{ active:tabSelected(2) }"> <a ng-click="selectTab(2)"> Receipts </a> </li>
         <li ng-class="{ active:tabSelected(3) }"> <a ng-click="selectTab(3)"> Add Receipt </a> </li>
       </ul>
-        <!-- tab content panels -->
+      <!-- tab content panels -->
       <div class="panel panel-default" ng-show="tabSelected(1)">
         <div class='panel-body'>
           <br>
-          <div class='row'>
-            <div class='col-md-2 text-right'>
-              <label>Store name</label>
+          <div class='container'>
+            <div class='row'>
+              <div class='col-md-2 text-center'>
+                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#edit-profile" ng-click="openEditProfileModal(currentStore)">Edit Profile</button>
+              </div>
+              <div class='col-md-1 text-right'>
+                <label>Name</label>
+              </div>
+              <div class='col-md-4'>
+                {{ currentStore.name }}
+              </div>
             </div>
-            <div class='col-md-4'>
-              {{ currentStore.name }}
+            <br>
+            <div class='row'>
+              <div class='col-md-3 text-right'>
+                <label>Email</label>
+              </div>
+              <div class='col-md-4'>
+                {{ currentStore.email }}
+              </div>
             </div>
-          </div>
-          <br>
-          <div class='row'>
-            <div class='col-md-2 text-right'>
-              <label>Email</label>
-            </div>
-            <div class='col-md-4'>
-              {{ currentStore.email }}
-            </div>
-          </div>
-          <br>
-          <div class='row'>
-            <div class='col-md-2 text-right'>
-              <label>API Token</label>
-            </div>
-            <div class='col-md-3'>
-              {{ currentStore.api_token.hex_value }}
-            </div>
-            <div class='col-md-1'>
-              <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset</button>
+            <br>
+            <div class='row'>
+              <div class='col-md-2 text-center'>
+                <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset token</button>
+              </div>
+              <div class='col-md-1 text-right'>
+                <label>Token</label>
+              </div>
+              <div class='col-md-3'>
+                {{ currentStore.api_token.hex_value }}
+              </div>
             </div>
           </div>
           <br>
@@ -64,7 +69,7 @@
                   <td>{{ receipt.transaction_num }}</td>
                   <td>{{ receipt.created_at | date:'short' }}</td>
                   <td class='glyph'>
-                    <a data-toggle="modal" ng-click="openEditModal(receipt)" data-target="#edit">
+                    <a data-toggle="modal" ng-click="openEditReceiptModal(receipt)" data-target="#edit-receipt">
                       <span class='glyphicon glyphicon-pencil'></span>
                     </a>
                   </td>
@@ -116,7 +121,7 @@
     </section>
 
     <!-- Edit Receipt Modal -->
-    <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="editLabel">
+    <div class="modal fade" id="edit-receipt" tabindex="-1" role="dialog" aria-labelledby="editLabel">
       <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
 
@@ -151,7 +156,39 @@
 
         </div>
       </div>
-    </div>  <!-- modal -->
+    </div>  <!-- Edit Receipt modal -->
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="edit-profile" tabindex="-1" role="dialog" aria-labelledby="edit-profileLabel">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Edit Profile</h4>
+          </div>
+          <form ng-submit="updateProfile()">
+            <div class="modal-body">
+              <div class="container-fluid">
+                <div class="form-group">
+                  <label for="item" class="control-label">Store name</label>
+                  <input class="form-control" type="text" id="item" ng-model="editProfile.name" >
+                </div>
+                <div class="form-group">
+                  <label for="amount" class="control-label">Email address</label>
+                  <input class="form-control" type="text" id="amount" ng-model="editProfile.email" >
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary" value="Save changes">
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>  <!-- Edit Profile modal -->
 
   </div>   <!-- ng-controller -->
 </div>   <!-- ng-app -->
