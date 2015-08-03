@@ -58,7 +58,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="receipt in currentStore.simple_receipts | orderBy:'created_at':true">
+                <tr ng-repeat="receipt in currentStore.simple_receipts">
                   <td>{{ receipt.item }}</td>
                   <td>{{ receipt.amount | currency:'$':2 }}</td>
                   <td>{{ receipt.transaction_num }}</td>

@@ -26,8 +26,8 @@ app.config(["$httpProvider", function ($httpProvider) {
 }]);
 //
 
-app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
-    function ($scope, $http, storeFactory, receiptFactory) {
+app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'receiptFactory',
+    function ($scope, $http, $filter, storeFactory, receiptFactory) {
 
   $scope.currentStore = null;
   $scope.status = null;
@@ -42,6 +42,14 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
     storeFactory.getCurrentStore()
       .success(function(store) {
         $scope.currentStore = store;
+        // Reverse-ordering receipts here rather than relying on
+        // orderBy filter in the template.  Workaround to this issue:
+        // new Date() (see $scope.addReceipt) returns a Date object (implicitly
+        // converted to a string), which differs from the 'created_at' string
+        // that Rails generates server-side, thereby resulting in mis-ordering
+        // of new receipts
+        $scope.currentStore.simple_receipts =
+          $filter('orderBy')($scope.currentStore.simple_receipts, 'created_at', true);
       })
       .error(function(error) {
         $scope.status = 'Error loading data: ' + error.message;
@@ -52,16 +60,9 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
     // fill in the store name and id, and date
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
-    // The line below (creating the date for $scope) results in
-    // data-binding not working, i.e. view is not updated until
-    // reloaded from the server.  Wtf?
-    // -> No date for now.  Date will only appear upon re-load
-    // from the server
-    // $scope.newReceipt.created_at = new Date();
-    console.log('New receipt: ', $scope.newReceipt);
-    // add to $scope.currentStore's receipts
-    currentStore.simple_receipts.push($scope.newReceipt);
-    console.log('currentStore receipts: ', currentStore.simple_receipts);
+    $scope.newReceipt.created_at = new Date();
+    // add to $scope.currentStore's receipts, latest first
+    currentStore.simple_receipts.unshift($scope.newReceipt);
     // POST receipt object
     receiptFactory.addReceipt($scope.newReceipt, $scope.currentStore.api_token.hex_value)
       .success(function(data, status) {
@@ -105,7 +106,7 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
     $scope.tab = setTab;
   };
 
-}]);
+}]);  // MainCtrl
 
 app.factory('storeFactory', ['$http', function ($http) {
   var storeFactory = {};
@@ -128,4 +129,33 @@ app.factory('receiptFactory', ['$http', function ($http) {
   };
   return receiptFactory;
 }]);
+
+// Data-binding debugging tool
+// app.config(['$provide', function ($provide) {
+//   $provide.decorator("$interpolate", ['$delegate', function ($delegate) {
+//     var interpolateWrap = function() {
+//       var interpolationFn = $delegate.apply(this, arguments);
+//         if(interpolationFn) {
+//           return interpolationFnWrap(interpolationFn, arguments);
+//         }
+//     };
+//     var interpolationFnWrap = function(interpolationFn, interpolationArgs) {
+//       return function() {
+//         var result = interpolationFn.apply(this, arguments);
+//         var log = result ? console.log : console.warn;
+//         log.call(console, "interpolation of  " + interpolationArgs[0].trim(),
+//             ":", result.trim());
+//         return result;
+//       };
+//     };
+//     angular.extend(interpolateWrap, $delegate);
+//     return interpolateWrap;
+//   }]);
+// }]);
+
+
+
+
+
+
 
