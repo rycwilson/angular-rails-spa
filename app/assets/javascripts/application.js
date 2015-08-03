@@ -44,14 +44,6 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     storeFactory.getCurrentStore()
       .success(function(store) {
         $scope.currentStore = store;
-        // Reverse-ordering receipts here rather than relying on
-        // orderBy filter in the template.  Workaround to this issue:
-        // new Date() (see $scope.addReceipt) returns a Date object (implicitly
-        // converted to a string), which differs from the 'created_at' string
-        // that Rails generates server-side, thereby resulting in mis-ordering
-        // of new receipts
-        $scope.currentStore.simple_receipts =
-          $filter('orderBy')($scope.currentStore.simple_receipts, 'created_at', true);
       })
       .error(function(error) {
         $scope.status = 'Error loading data: ' + error.message;
@@ -62,13 +54,12 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     // fill in the store name and id, and date
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
-    $scope.newReceipt.created_at = new Date();
-    // add to $scope.currentStore's receipts, latest first
-    currentStore.simple_receipts.unshift($scope.newReceipt);
     // POST receipt object
     receiptFactory.addReceipt($scope.newReceipt, $scope.currentStore.api_token.hex_value)
       .success(function(data, status) {
         console.log('addReceipt success: ', data, status);
+        // add to $scope.currentStore's receipts, latest first
+        currentStore.simple_receipts.unshift(data);
       })
       .error(function(data, status) {
         console.log('addReceipt error: ', data, status);
@@ -79,9 +70,19 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     $event.target.submit.blur();
   };
 
-  $scope.updateReceipt = function(receipt) {
-    console.log(receipt);
-    $scope.editReceipt.store_id = receipt.store_id;
+  $scope.updateReceipt = function() {
+    var receipts = $scope.currentStore.simple_receipts;
+    // find and update the edited receipt
+    var index = -1;
+    for (var i = 0; i < receipts.length; i++) {
+      if (receipts[i].id === $scope.editReceipt.id) {
+        // update $scope
+        receipts[i].item = $scope.editReceipt.item;
+        receipts[i].amount = $scope.editReceipt.amount;
+        receipts[i].transaction_num = $scope.editReceipt.transaction_num;
+      }
+    }
+    // PUT receipt
     receiptFactory.updateReceipt($scope.editReceipt, $scope.currentStore.api_token.hex_value)
       .success(function(data, status) {
         console.log('updateReceipt success: ', data, status);
@@ -89,6 +90,8 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
       .error(function(data, status) {
         console.log(('updateReceipt error: ', data, status));
       });
+    // close the modal
+    $('#edit').modal('hide');
     // reset editReceipt
     $scope.editReceipt = {};
   };
@@ -112,6 +115,13 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
         $scope.currentStore.api_token.hex_value = new_token.hex_value;
         $event.target.blur();
       });
+  };
+
+  $scope.openEditModal = function(receipt) {
+    $scope.editReceipt.id = receipt.id;
+    $scope.editReceipt.item = receipt.item;
+    $scope.editReceipt.amount = receipt.amount;
+    $scope.editReceipt.transaction_num = receipt.transaction_num;
   };
 
   $scope.tabSelected = function(checkTab) {
@@ -151,7 +161,10 @@ app.factory('receiptFactory', ['$http', function ($http) {
   return receiptFactory;
 }]);
 
+
 // Data-binding debugging tool
+// Uncomment all this and whenever an expression {{ }} is evaluated,
+// results will log to the console.
 // app.config(['$provide', function ($provide) {
 //   $provide.decorator("$interpolate", ['$delegate', function ($delegate) {
 //     var interpolateWrap = function() {

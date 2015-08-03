@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   get '/receipts', to: 'receipts#show', as: 'receipts'
   post '/receipts', to: 'receipts#create'
+  put '/receipts', to: 'receipts#update'
   delete '/receipts', to: 'receipts#destroy'
 
   # this route is necessary for using respond_with (despite there

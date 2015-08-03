@@ -49,7 +49,21 @@ class ReceiptsController < ApplicationController
     end
   end
 
+  #
+  # PUT /receipts.json
+  #
   def update
+    if @valid_api_token
+      @simple_receipt = SimpleReceipt.find params[:id]
+      @simple_receipt.update receipt_params
+      # TODO: return the object
+      # By default, Rails won't do this with PUT, body content is empty
+      respond_with @simple_receipt
+    else
+      # unauthorized
+      render json: { status:"error",
+                       mesg:"Invalid API token" }, status: 401
+    end
   end
 
   #
