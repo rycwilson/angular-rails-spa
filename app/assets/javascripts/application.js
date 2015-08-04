@@ -26,11 +26,13 @@ app.config(["$httpProvider", function ($httpProvider) {
 }]);
 //
 
-app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'receiptFactory',
-    function ($scope, $http, $filter, storeFactory, receiptFactory) {
+app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
+    function ($scope, $http, storeFactory, receiptFactory) {
 
-  $scope.currentStore = null;
+  $scope.currentStore = {};
   $scope.status = null;
+  // today's receipt total
+  $scope.todaysReceiptTotal = 0;
   // placeholder for a new receipt
   $scope.newReceipt = {};
   // placeholder for an edited receipt
@@ -46,15 +48,44 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     storeFactory.getCurrentStore()
       .success(function(store) {
         $scope.currentStore = store;
+        sumTodaysReceipts();
       })
       .error(function(error) {
         $scope.status = 'Error loading data: ' + error.message;
     });
   }
 
+  function sumTodaysReceipts() {
+    // pre-processor will choke on this function if $scope.currentStore
+    // is null (as it is when pre-processor evaluates this declaration),
+    // so give it some dummy data for that case
+    var currentStore = $scope.currentStore || { simple_receipts:[] };
+    var today = new Date();
+    var todaysReceipts, receiptDate, receiptAmounts;
+    // factor out the time of day
+    today = today.setHours(0,0,0,0);
+    // grab today's receipts from current store
+    todaysReceipts = currentStore.simple_receipts.filter(function(receipt) {
+      receiptDate = new Date(receipt.created_at);
+      return receiptDate.setHours(0,0,0,0) == today;
+    });
+    // convert amounts from string to float
+    receiptAmounts = todaysReceipts.map(function(receipt) {
+      return parseFloat(receipt.amount);
+    });
+    // sum the amounts
+    $scope.todaysReceiptTotal = receiptAmounts.reduce(function(a, b) {
+      return a + b;
+    });
+    // Below doesn't work. Apparently reduce doesn't like
+    // the conversion to float
+    // sum = todaysReceipts.reduce(function(a, b) {
+    //   return parseFloat(a.amount) + parseFloat(b.amount);
+    // });
+  }
+
   $scope.addReceipt = function(currentStore, $event) {
-    console.log($event);
-    // fill in the store name and id, and date
+    // fill in the store name and id
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
     // POST receipt object
@@ -63,6 +94,7 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
         console.log('addReceipt success: ', data, status);
         // add to $scope.currentStore's receipts, latest first
         currentStore.simple_receipts.unshift(data);
+        sumTodaysReceipts();
       })
       .error(function(data, status) {
         console.log('addReceipt error: ', data, status);
@@ -71,6 +103,7 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     $scope.newReceipt = {};
     // remove focus from button
     $(event.target).find('#new-receipt-submit').blur();
+    // sum today's receipts
   };
 
   $scope.updateReceipt = function() {
@@ -89,6 +122,7 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     receiptFactory.updateReceipt($scope.editReceipt, $scope.currentStore.api_token.hex_value)
       .success(function(data, status) {
         console.log('updateReceipt success: ', data, status);
+        sumTodaysReceipts();
       })
       .error(function(data, status) {
         console.log(('updateReceipt error: ', data, status));
@@ -106,6 +140,7 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
       receiptFactory.removeReceipt(receipt, $scope.currentStore.api_token.hex_value)
         .success(function(data, status) {
           console.log(data, status);
+          sumTodaysReceipts();
         });
     }
   };

@@ -71,7 +71,9 @@
             </form>
           </div>
           <div class='col-md-8'>
-            <h4>All Receipts</h4>
+            <h4>All Receipts
+              <small> (today: {{ todaysReceiptTotal | currency:'$':2 }})</small>
+            </h4>
             <table class='table table-striped'>
               <thead>
                 <tr>
