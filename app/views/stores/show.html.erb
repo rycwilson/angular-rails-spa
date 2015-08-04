@@ -4,44 +4,41 @@
       <ul class="nav nav-tabs">
         <li ng-class="{ active:tabSelected(1) }"> <a ng-click="selectTab(1)"> Account Profile </a> </li>
         <li ng-class="{ active:tabSelected(2) }"> <a ng-click="selectTab(2)"> Receipts </a> </li>
-        <li ng-class="{ active:tabSelected(3) }"> <a ng-click="selectTab(3)"> Add Receipt </a> </li>
       </ul>
       <!-- tab content panels -->
       <div class="panel panel-default" ng-show="tabSelected(1)">
         <div class='panel-body'>
           <br>
-          <div class='container'>
-            <div class='row'>
-              <div class='col-md-2 text-center'>
-                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#edit-profile" ng-click="openEditProfileModal(currentStore)">Edit Profile</button>
-              </div>
-              <div class='col-md-1 text-right'>
-                <label>Name</label>
-              </div>
-              <div class='col-md-4'>
-                {{ currentStore.name }}
-              </div>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#edit-profile" ng-click="openEditProfileModal(currentStore)">Edit Profile</button>
             </div>
-            <br>
-            <div class='row'>
-              <div class='col-md-3 text-right'>
-                <label>Email</label>
-              </div>
-              <div class='col-md-4'>
-                {{ currentStore.email }}
-              </div>
+            <div class='col-md-1 text-right'>
+              <label>Name</label>
             </div>
-            <br>
-            <div class='row'>
-              <div class='col-md-2 text-center'>
-                <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset token</button>
-              </div>
-              <div class='col-md-1 text-right'>
-                <label>Token</label>
-              </div>
-              <div class='col-md-3'>
-                {{ currentStore.api_token.hex_value }}
-              </div>
+            <div class='col-md-4'>
+              {{ currentStore.name }}
+            </div>
+          </div>
+          <br>
+          <div class='row'>
+            <div class='col-md-3 text-right'>
+              <label>Email</label>
+            </div>
+            <div class='col-md-4'>
+              {{ currentStore.email }}
+            </div>
+          </div>
+          <br>
+          <div class='row'>
+            <div class='col-md-2 text-right'>
+              <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset token</button>
+            </div>
+            <div class='col-md-1 text-right'>
+              <label>Token</label>
+            </div>
+            <div class='col-md-3'>
+              {{ currentStore.api_token.hex_value }}
             </div>
           </div>
           <br>
@@ -50,7 +47,31 @@
       <div class="panel panel-default" ng-show="tabSelected(2)">
         <div class='panel-body'>
         <br>
-          <div class='col-md-10 col-md-offset-1'>
+        <div class='container'>
+          <div class='col-md-3'>
+            <h4>Add Receipt</h4>
+            <form name="newReceiptForm" ng-submit="newReceiptForm.$valid &&
+                  addReceipt(currentStore, $event)" novalidate>
+              <div class='form-group'>
+                <label for="new-receipt-item">Item</label>
+                <input type="text" class="form-control" id="new-receipt-item" ng-model="newReceipt.item" required>
+              </div>
+              <div class='form-group'>
+                <label for="new-receipt-amount">Amount</label>
+                <input type="number" class="form-control" id="new-receipt-amount" ng-model="newReceipt.amount" required>
+              </div>
+              <div class='form-group'>
+                <label for="new-receipt-trans">Transaction Number</label>
+                <input type="text" class="form-control" id="new-receipt-trans" ng-model="newReceipt.transaction_num" required>
+              </div>
+              <input type="submit" class='btn btn-primary' value="Add Receipt">
+              <!-- $valid is a built-in property -->
+              <br>
+              <div>Valid? newReceiptForm is {{ newReceiptForm.$valid }}</div>
+            </form>
+          </div>
+          <div class='col-md-8'>
+            <h4>All Receipts</h4>
             <table class='table table-striped'>
               <thead>
                 <tr>
@@ -69,7 +90,7 @@
                   <td>{{ receipt.transaction_num }}</td>
                   <td>{{ receipt.created_at | date:'short' }}</td>
                   <td class='glyph'>
-                    <a data-toggle="modal" ng-click="openEditReceiptModal(receipt)" data-target="#edit-receipt">
+                    <a ng-click="openEditReceiptModal(receipt)" data-toggle="modal" data-target="#edit-receipt">
                       <span class='glyphicon glyphicon-pencil'></span>
                     </a>
                   </td>
@@ -80,42 +101,7 @@
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-      <div class="panel panel-default" ng-show="tabSelected(3)">
-        <div class='panel-body'>
-        <br>
-          <form name="newReceiptForm"
-            ng-submit="newReceiptForm.$valid &&
-                       addReceipt(currentStore, $event)"
-            novalidate>
-            <div class='form-group'>
-              <div class='col-md-2 text-right'>
-                <label>Item</label>
-              </div>
-              <input type="text" ng-model="newReceipt.item" required>
-              <br>
-            </div>
-            <div class='form-group'>
-              <div class='col-md-2 text-right'>
-              <label>Amount</label>
-              </div>
-              <input type="number" ng-model="newReceipt.amount" required>
-              <br>
-            </div>
-            <div class='form-group'>
-              <div class='col-md-2 text-right'>
-              <label>Transaction Number</label>
-              </div>
-              <input type="text" ng-model="newReceipt.transaction_num" required>
-            </div>
-            <!-- $valid is a built-in property -->
-            <div>Valid? newReceiptForm is {{ newReceiptForm.$valid }}</div>
-            <div class='col-md-4 text-right'>
-              <input id="submit" type="submit" value="Add Receipt"
-                class='btn btn-primary'>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </section>
