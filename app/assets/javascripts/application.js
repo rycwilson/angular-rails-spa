@@ -161,6 +161,8 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
     $('#edit-profile').modal('hide');
     // reset buffer
     $scope.editProfile = {};
+    // take focus off the button - not working!
+    $('#edit-profile-button').blur();
   };
 
   // TODO: better to create a custom directive than manipulate DOM
