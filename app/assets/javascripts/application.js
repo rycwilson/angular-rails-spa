@@ -53,6 +53,7 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
   }
 
   $scope.addReceipt = function(currentStore, $event) {
+    console.log($event);
     // fill in the store name and id, and date
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
@@ -69,7 +70,7 @@ app.controller("MainCtrl", ['$scope', '$http', '$filter', 'storeFactory', 'recei
     // reset newReceipt
     $scope.newReceipt = {};
     // remove focus from button
-    $event.target.submit.blur();
+    $(event.target).find('#new-receipt-submit').blur();
   };
 
   $scope.updateReceipt = function() {
