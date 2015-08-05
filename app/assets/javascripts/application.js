@@ -74,9 +74,10 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
       return parseFloat(receipt.amount);
     });
     // sum the amounts
+    // need to provide an initial value in the event of an empty array
     $scope.todaysReceiptTotal = receiptAmounts.reduce(function(a, b) {
       return a + b;
-    });
+    }, 0);
     // Below doesn't work. Apparently reduce doesn't like
     // the conversion to float
     // sum = todaysReceipts.reduce(function(a, b) {
