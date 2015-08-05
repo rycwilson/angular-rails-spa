@@ -32,7 +32,7 @@
           <br>
           <div class='row'>
             <div class='col-md-2 text-right'>
-              <button class='btn btn-sm btn-default' ng-click='resetToken($event)'>Reset token</button>
+              <button id="reset-token-button" class='btn btn-sm btn-default' ng-click='resetToken()'>Reset token</button>
             </div>
             <div class='col-md-1 text-right'>
               <label>Token</label>
@@ -51,7 +51,7 @@
           <div class='col-md-3'>
             <h4>Add Receipt</h4>
             <form name="newReceiptForm" ng-submit="newReceiptForm.$valid &&
-                  addReceipt(currentStore, $event)" novalidate>
+                  addReceipt(currentStore)" novalidate>
               <div class='form-group'>
                 <label for="new-receipt-item">Item</label>
                 <input type="text" class="form-control" id="new-receipt-item" ng-model="newReceipt.item" required>

@@ -85,7 +85,7 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
     // });
   }
 
-  $scope.addReceipt = function(currentStore, $event) {
+  $scope.addReceipt = function(currentStore) {
     // fill in the store name and id
     $scope.newReceipt.store_name = $scope.currentStore.name;
     $scope.newReceipt.store_id = $scope.currentStore.id;
@@ -103,7 +103,7 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
     // reset newReceipt
     $scope.newReceipt = {};
     // remove focus from button
-    $(event.target).find('#new-receipt-submit').blur();
+    $('#new-receipt-submit').blur();
     // sum today's receipts
   };
 
@@ -168,11 +168,11 @@ app.controller("MainCtrl", ['$scope', '$http', 'storeFactory', 'receiptFactory',
 
   // TODO: better to create a custom directive than manipulate DOM
   // from controller (but blur() is pretty simple; ok for now)
-  $scope.resetToken = function($event) {
+  $scope.resetToken = function() {
     $http.get('/account/token_reset.json').
       success(function (new_token) {
         $scope.currentStore.api_token.hex_value = new_token.hex_value;
-        $event.target.blur();
+        $('#reset-token-button').blur();
       });
   };
 
