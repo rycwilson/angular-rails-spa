@@ -2,11 +2,11 @@
 <html>
 <head>
   <title>JsonApi</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body ng-app="StoreApp">
 
   <nav class="navbar navbar-static-top">
     <div class="container-fluid">
@@ -21,9 +21,22 @@
         <a class="navbar-brand" href="#">Store It</a>
       </div>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Flash messaging -->
+      <% flash.each do |type, msg| %>
+        <!-- type: success, info, warning, danger -->
+        <% if msg.is_a?(String) %>
+          <div id='flash' class="col-md-8 col-md-offset-2 text-center alert alert-<%= type %>" style="z-index:1; position:fixed; width:65%; display:none">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">&times;</button>
+            <%= content_tag :div, msg, :id => "flash_#{type}" %>
+          </div>
+        <% end %>
+      <% end %>
+
       <% if current_store %>
-        <div class="collapse navbar-collapse" id="collpase_button">
+
+        <div class="collapse navbar-collapse"
+            id="collpase_button">
           <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><%= current_store.email %><span class="caret"></span></a>
@@ -32,16 +45,21 @@
                 </ul>
               </li>
           </ul>
-        </div><!-- /.navbar-collapse -->
+        </div>
+
       <% end %>
+
+
     </div><!-- /.container-fluid -->
   </nav>
 
-<div class='container'>
 
-  <%= yield %>
 
-</div>
+  <div class='container'>
+
+    <%= yield %>
+
+  </div>
 
 </body>
 </html>

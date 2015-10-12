@@ -1,0 +1,73 @@
+<div class='col-md-6 col-md-offset-3'>
+  <div class='well'>
+
+    <div class='row'>  <!-- form heading -->
+
+      <div class='col-md-5 text-center'>
+        <h3><%= title %></h3>
+      </div>
+
+      <div class='col-md-7 text-right'>
+        <% if params[:action] == 'new' %>
+          <div style='padding-top: 8px'>
+            Already registered?<br>
+            <%= link_to 'Sign in', login_path %>
+          </div>
+        <% else %>
+          <!-- cancel edit, back to store page -->
+          <div style='padding-top: 27px'>
+            <%= link_to 'Cancel', store_path(store) %>
+          </div>
+        <% end %>
+      </div>
+
+    </div><br>  <!-- form heading -->
+
+    <%= form_for store, html: { class: 'form-horizontal' } do |f| %>
+
+      <div class='form-group'>
+        <%= f.label :name, class: 'col-md-4 control-label' %>
+        <div class='col-md-8'>
+          <%= f.text_field :name, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <%= f.label :email, class: 'col-md-4 control-label' %>
+        <div class='col-md-8'>
+          <%= f.email_field :email, class: 'form-control' %>
+        </div>
+      </div>
+
+      <% if params[:action] == 'new' %>
+
+        <div class='form-group'>
+          <%= f.label "email confirm", class: 'col-md-4 control-label' %>
+          <div class='col-md-8'>
+            <%= f.email_field :email_confirmation, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <%= f.label :password, class: 'col-md-4 control-label' %>
+          <div class='col-md-8'>
+            <%= f.password_field :password, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <%= f.label "password confirm", class: 'col-md-4 control-label' %>
+          <div class='col-md-8'>
+            <%= f.password_field :password_confirmation, class: 'form-control' %>
+          </div>
+        </div>
+
+      <% end %>
+
+      <%= f.submit class: 'btn btn-primary pull-right' %>
+
+    <% end %>
+    <br><br>
+
+  </div>
+</div>

@@ -1,38 +1,37 @@
-<div class='col-md-5'>
+<br>
+<div class='col-md-4 col-md-offset-4'>
   <div class='well'>
+
     <div class='row'>
-      <div class='col-md-3 text-right'>
-        <h3>Log in</h3>
+
+      <div class='col-md-6'>
+        <h3>Sign in</h3>
       </div>
-    </div>
-    <br>
-    <%= form_tag(sessions_path) do %>
-      <div class='row'>
-        <div class='col-md-3 text-right'>
-          <%= label_tag(:email) %>
-        </div>
-        <div class='col-md-8'>
-          <%= text_field_tag(:email) %>
-        </div>
+
+      <div class='col-md-6 text-right' style='padding-top: 7px'>
+        Not registered?<br>
+        <%= link_to 'Sign up', signup_path %>
       </div>
-      <br>
-      <div class='row'>
-        <div class='col-md-3 text-right'>
-          <%= label_tag(:password) %>
-        </div>
-        <div class='col-md-8'>
-          <%= password_field_tag(:password) %>
-        </div>
+
+    </div><br>
+
+    <%= form_for :user, url: sessions_path do |f| %>
+
+      <div class='form-group'>
+        <%= f.label :email %>
+        <%= f.email_field :email,
+          { class: 'form-control', autofocus: true } %>
       </div>
-      <br>
-      <div class='row'>
-        <div class='col-md-11 text-right'>
-          <%= submit_tag("Log in", class: "btn btn-primary") %>
-          <br><br>
-          <p>Not registered?&nbsp&nbsp<span><%= link_to('Sign up here', signup_path) %></span></p>
-          <p>Forget your password?&nbsp&nbsp<span><%= link_to('Click here', passwd_reset_path) %></span></p>
-        </div>
+
+      <div class='form-group'>
+        <%= f.label :password %>
+        <%= f.password_field :password, class: 'form-control' %>
       </div>
+
+      <%= f.submit "Sign in", class: 'btn btn-primary pull-right' %>
+
     <% end %>
+    <br><br>
+
   </div>
 </div>

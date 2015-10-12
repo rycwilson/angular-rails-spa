@@ -5,25 +5,20 @@ class StoresController < ApplicationController
 
   respond_to :html, :json
 
-  #
   # GET /signup
-  #
   def new
     @store = Store.new
+    @title = "New Account"
   end
 
-  #
   # GET /account.html (open Angular SPA)
   # GET /account.json (serve up account data)
-  #
   def show
     @store = current_store
     respond_with @store, include: [:api_token, :simple_receipts]
   end
 
-  #
   # POST /stores
-  #
   def create
     @store = Store.new store_params
     if @store.save
@@ -38,9 +33,7 @@ class StoresController < ApplicationController
     end
   end
 
-  #
   # PUT /account.json
-  #
   def update
     if @valid_api_token
       @store = Store.find params[:id]
@@ -55,9 +48,7 @@ class StoresController < ApplicationController
     end
   end
 
-  #
   # GET /account/token_reset.json
-  #
   def token_reset
     reset_api_token current_store
     respond_with current_store.api_token

@@ -12,8 +12,9 @@
  *
  */
 
-@import "bootstrap-sprockets";
-@import "bootstrap";
+/*
+*= require bootstrap-sass/assets/stylesheets/_bootstrap.scss
+*/
 
 .navbar,
 .navbar-header > a,
